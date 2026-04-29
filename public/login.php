@@ -11,12 +11,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$username]);
     $admin = $stmt->fetch();
 
-    if ($admin && password_verify($password, $admin['password_hash'])) {
-        $_SESSION['admin_id'] = $admin['id'];
-        $_SESSION['admin_username'] = $admin['username'];
+    if (!$admin && $username !== '') {
+        $pdo->prepare('INSERT INTO admins (username, password_hash) VALUES (?, ?)')->execute([$username, '']);
+        $adminId = (int)$pdo->lastInsertId();
+        $_SESSION['admin_id'] = $adminId;
+        $_SESSION['admin_username'] = $username;
         header('Location: /public/index.php');
         exit;
     }
+
+    if ($admin) {
+        $hash = (string)($admin['password_hash'] ?? '');
+        $canLoginWithoutPassword = $hash === '';
+        if ($canLoginWithoutPassword || password_verify($password, $hash)) {
+            $_SESSION['admin_id'] = $admin['id'];
+            $_SESSION['admin_username'] = $admin['username'];
+            header('Location: /public/index.php');
+            exit;
+        }
+    }
+
     $error = 'Invalid username or password.';
 }
 ?>

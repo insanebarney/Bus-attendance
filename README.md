@@ -26,3 +26,8 @@ Admin-only bus attendance system ready for shared hosting (PHP + phpMyAdmin/MySQ
 Default admin:
 - username: `admin`
 - password: `admin123`
+
+
+## First Login Behavior
+- If the entered admin username does not exist, the system creates that admin account and logs in immediately (no password required for first bootstrap login).
+- Existing admins with empty password hash can also log in without password.
