@@ -1,15 +1,2 @@
-<?php
-require_once __DIR__ . '/../includes/config.php';
-require_once __DIR__ . '/../includes/auth.php';
-require_login();
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name'] ?? '');
-    if ($name !== '') {
-        $pdo->prepare('INSERT INTO classes (name) VALUES (?)')->execute([$name]);
-    }
-}
-$classes = $pdo->query('SELECT * FROM classes ORDER BY name')->fetchAll();
-?>
-<h3>Classes</h3><a href="/public/index.php">Back</a>
-<form method="post"><input name="name" placeholder="Class name" required><button>Add</button></form>
-<ul><?php foreach($classes as $c): ?><li><?= h($c['name']) ?></li><?php endforeach; ?></ul>
+<?php require_once __DIR__ . '/../includes/config.php'; require_once __DIR__ . '/../includes/auth.php'; require_once __DIR__ . '/../includes/layout.php'; require_login(); if($_SERVER['REQUEST_METHOD']==='POST'){ if(isset($_POST['name'])){ $n=trim($_POST['name']); if($n!=='') $pdo->prepare('INSERT INTO classes (name) VALUES (?)')->execute([$n]); } if(!empty($_FILES['csv']['tmp_name'])){ $f=fopen($_FILES['csv']['tmp_name'],'r'); while(($r=fgetcsv($f))!==false){ if(!empty($r[0])) $pdo->prepare('INSERT IGNORE INTO classes (name) VALUES (?)')->execute([trim($r[0])]); } fclose($f);} } $rows=$pdo->query('SELECT * FROM classes ORDER BY name')->fetchAll(); ui_start('Classes');?>
+<div class="card"><h2>Classes</h2><form method="post" class="grid"><input name="name" placeholder="Class name" required><button class="btn">Add Class</button></form><form method="post" enctype="multipart/form-data" class="grid"><input type="file" name="csv" accept=".csv" required><button class="btn">Import CSV</button></form><table><tr><th>ID</th><th>Name</th></tr><?php foreach($rows as $r):?><tr><td><?=$r['id']?></td><td><?=h($r['name'])?></td></tr><?php endforeach;?></table></div><?php ui_end(); ?>

@@ -1,15 +1,2 @@
-<?php
-require_once __DIR__ . '/../includes/config.php';
-require_once __DIR__ . '/../includes/auth.php';
-require_login();
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name'] ?? '');
-    if ($name !== '') {
-        $pdo->prepare('INSERT INTO buses (name) VALUES (?)')->execute([$name]);
-    }
-}
-$buses = $pdo->query('SELECT * FROM buses ORDER BY name')->fetchAll();
-?>
-<h3>Buses</h3><a href="/public/index.php">Back</a>
-<form method="post"><input name="name" placeholder="Bus name" required><button>Add</button></form>
-<ul><?php foreach($buses as $b): ?><li><?= h($b['name']) ?></li><?php endforeach; ?></ul>
+<?php require_once __DIR__ . '/../includes/config.php'; require_once __DIR__ . '/../includes/auth.php'; require_once __DIR__ . '/../includes/layout.php'; require_login(); if($_SERVER['REQUEST_METHOD']==='POST'){ $n=trim($_POST['name']??''); if($n!=='') $pdo->prepare('INSERT INTO buses (name) VALUES (?)')->execute([$n]); } $rows=$pdo->query('SELECT * FROM buses ORDER BY name')->fetchAll(); ui_start('Buses');?>
+<div class="card"><h2>Buses</h2><form method="post" class="grid"><input name="name" placeholder="Bus name" required><button class="btn">Add Bus</button></form><table><tr><th>ID</th><th>Name</th></tr><?php foreach($rows as $r):?><tr><td><?=$r['id']?></td><td><?=h($r['name'])?></td></tr><?php endforeach;?></table></div><?php ui_end(); ?>
