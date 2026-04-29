@@ -34,6 +34,7 @@ CREATE TABLE attendance (
 );
 INSERT INTO settings(setting_key,setting_value) VALUES
 ('routes','arriving,departure'),
-('attendance_statuses','attending,absent,attending without bus');
+('attendance_statuses','attending,absent,attending without bus'),
+('login_logo','/assets/default-logo.svg');
 INSERT INTO admins (username, password_hash) VALUES
 ('admin', '$2y$10$3Qx1ewfLh17A9ghEfPnWJem9wLJBTSPotI8m5J1Yzx8ViN9bn6A5.');
