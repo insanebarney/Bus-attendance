@@ -35,8 +35,9 @@ CREATE TABLE attendance (
 CREATE TABLE bus_complaints (
   id INT AUTO_INCREMENT PRIMARY KEY,
   complaint_date DATE NOT NULL,
-  name VARCHAR(150) NOT NULL,
+  complainer_name LONGTEXT NOT NULL,
   student_id INT NULL,
+  administrator_name VARCHAR(150) NULL,
   complaint_type VARCHAR(100) NOT NULL,
   bus_id INT NOT NULL,
   driver_name VARCHAR(120) NOT NULL,
