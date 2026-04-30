@@ -32,9 +32,25 @@ CREATE TABLE attendance (
   PRIMARY KEY (attendance_date, student_id, route),
   FOREIGN KEY (student_id) REFERENCES students(id)
 );
+CREATE TABLE bus_complaints (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  complaint_date DATE NOT NULL,
+  name VARCHAR(150) NOT NULL,
+  student_id INT NULL,
+  complaint_type VARCHAR(100) NOT NULL,
+  bus_id INT NOT NULL,
+  driver_name VARCHAR(120) NOT NULL,
+  matron_name VARCHAR(120) NOT NULL,
+  status VARCHAR(100) NOT NULL,
+  procedure_note TEXT NOT NULL,
+  FOREIGN KEY (student_id) REFERENCES students(id),
+  FOREIGN KEY (bus_id) REFERENCES buses(id)
+);
 INSERT INTO settings(setting_key,setting_value) VALUES
 ('routes','arriving,departure'),
 ('attendance_statuses','attending,absent,attending without bus'),
+('complaint_types','late bus,bad behavior,safety issue,other'),
+('complaint_statuses','open,in progress,closed'),
 ('login_logo','/assets/default-logo.svg');
 INSERT INTO admins (username, password_hash) VALUES
 ('admin', '$2y$10$3Qx1ewfLh17A9ghEfPnWJem9wLJBTSPotI8m5J1Yzx8ViN9bn6A5.');
