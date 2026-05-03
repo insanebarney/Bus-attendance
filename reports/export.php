@@ -1,0 +1,9 @@
+<?php require_once __DIR__ . '/../includes/config.php'; require_once __DIR__ . '/../includes/auth.php'; require_login();
+$type=$_GET['type']??'student'; $from=$_GET['from']??date('Y-m-d'); $to=$_GET['to']??date('Y-m-d'); $format=$_GET['format']??'csv'; $route=$_GET['route']??'both';
+$busId=(int)($_GET['bus_id']??0); $classId=(int)($_GET['class_id']??0); $studentId=(int)($_GET['student_id']??0);
+$params=[$from,$to]; $where='a.attendance_date BETWEEN ? AND ?'; if($route!=='both'){ $where.=' AND a.route=?'; $params[]=$route; }
+if($type==='bus' && $busId>0){$where.=' AND s.bus_id=?';$params[]=$busId;} if($type==='class' && $classId>0){$where.=' AND s.class_id=?';$params[]=$classId;} if($type==='student' && $studentId>0){$where.=' AND s.id=?';$params[]=$studentId;}
+$sql="SELECT a.attendance_date,s.code,s.name,c.name class,COALESCE(b.name,'No bus') bus,a.route,a.status FROM attendance a JOIN students s ON s.id=a.student_id LEFT JOIN classes c ON c.id=s.class_id LEFT JOIN buses b ON b.id=s.bus_id WHERE $where ORDER BY a.attendance_date,b.name,c.name,s.name";
+$st=$pdo->prepare($sql);$st->execute($params);$rows=$st->fetchAll();
+if($format==='csv'){ header('Content-Type: text/csv; charset=UTF-8'); header('Content-Disposition: attachment; filename="report.csv"'); echo "\xEF\xBB\xBF"; $o=fopen('php://output','w'); if($rows) fputcsv($o,array_keys($rows[0])); foreach($rows as $r) fputcsv($o,$r); fclose($o); exit; }
+header('Content-Type: text/html; charset=UTF-8'); echo '<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><style>body{font-family:Tahoma,Arial}table{width:100%;border-collapse:collapse}th,td{border:1px solid #444;padding:6px}</style><h2>Attendance Report</h2><table>'; if($rows){ echo '<tr>'; foreach(array_keys($rows[0]) as $h) echo '<th>'.h($h).'</th>'; echo '</tr>'; foreach($rows as $r){ echo '<tr>'; foreach($r as $v) echo '<td>'.h((string)$v).'</td>'; echo '</tr>'; } } echo '</table><script>window.print()</script></html>';
