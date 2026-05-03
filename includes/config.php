@@ -2,9 +2,9 @@
 session_start();
 
 $host = 'localhost';
-$db = 'bus_attendance';
-$user = 'root';
-$pass = '';
+$db = 'test';
+$user = 'test';
+$pass = 'test';
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
